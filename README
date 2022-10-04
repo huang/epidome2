@@ -53,8 +53,8 @@ plotQualityProfile(fnRs[1:2])
 
 
 #-------------------------------------------------------------------------------------------------------------------------------
-#---- STEP1: cutadapt instead of Trimmomatic (namely demultiplexing, see epidome/scripts/EPIDOME_yycH_cutadapt_loop.sh) ----
-#epidome/scripts/EPIDOME_yycH_cutadapt_loop.sh
+#---- STEP1: cutadapt instead of Trimmomatic (namely demultiplexing, see epidome_scripts/EPIDOME_yycH_cutadapt_loop.sh) ----
+#epidome_scripts/EPIDOME_yycH_cutadapt_loop.sh
 
 #5′-CGATGCKAAAGTGCCGAATA-3′/5′-CTTCATTTAAGAAGCCACCWTGACT-3′  for yccH
 #5′-TGGGTATGRCAATCACTTTACA-3′/5′-GCATCAAAAGCACTCTCATTACC-3′  for g216
@@ -147,7 +147,7 @@ validate_mapping_file.py -m map.txt
 
 
 #-------------------------------------------------------------------------------------------------------------------------------------------------
-#---- STEP2 filtering+trimming+merging+chimera-removing (scripts are modified from epidome/scripts/dada2_for_EPIDOME_yycH_runwise_pipeline.R) ----
+#---- STEP2 filtering+trimming+merging+chimera-removing (scripts are modified from epidome_scripts/dada2_for_EPIDOME_yycH_runwise_pipeline.R) ----
 #Input: cutadapted_yccH, cutadapted_g216
 #Outputs: 16S_seqtab_from_dada2.rds
 #         16S_seqtab_from_dada2.csv
@@ -189,7 +189,7 @@ summarize_taxa.py -i otu_table.biom -o ./tax
 
 
 #-------------------------------------------------------------------------------------------------
-#---STEP3 stitching and removing chimeras (see ~/DATA/Data_Holger_Epidome/epidome/scripts/Combine_and_Remove_Chimeras_yycH.R) ----
+#---STEP3 stitching and removing chimeras (see epidome_scripts/Combine_and_Remove_Chimeras_yycH.R) ----
 #my_Combine_and_Remove_Chimeras_g216.R is a part of my_EPIDOME_yycH_runwise_pipeline.R (see lines 53-55) --> IGNORED!
 
 #zcat A10-1_R1.fastq.gz | echo $((`wc -l`/4))
@@ -221,17 +221,17 @@ summarize_taxa.py -i otu_table.biom -o ./tax
 
 
 # --------------------------------------------------------------------------
-# ---- STEP Classification: epidome/scripts/ASV_blast_classification.py ----
-#Input: g216_seqtab_nochim.csv using DATABASE epidome/DB/g216_ref_aln.fasta
+# ---- STEP Classification: epidome_scripts/ASV_blast_classification.py ----
+#Input: g216_seqtab_nochim.csv using DATABASE epidome_DB/g216_ref_aln.fasta
 #Output: g216_seqtab_ASV_seqs.fasta, g216_seqtab_ASV_blast.txt and g216_seqtab.csv.classified.csv
 
 
-python3 epidome/scripts/ASV_blast_classification.py   yycH_seqtab_nochim.csv yycH_seqtab_ASV_seqs.fasta  epidome/DB/yycH_ref_aln.fasta  yycH_seqtab_ASV_blast.txt yycH_seqtab.csv.classified.csv 99.5
-python3 epidome/scripts/ASV_blast_classification.py   g216_seqtab_nochim.csv g216_seqtab_ASV_seqs.fasta  epidome/DB/g216_ref_aln.fasta  g216_seqtab_ASV_blast.txt g216_seqtab.csv.classified.csv 99.5
+python3 epidome_scripts/ASV_blast_classification.py   yycH_seqtab_nochim.csv yycH_seqtab_ASV_seqs.fasta  epidome_DB/yycH_ref_aln.fasta  yycH_seqtab_ASV_blast.txt yycH_seqtab.csv.classified.csv 99.5
+python3 epidome_scripts/ASV_blast_classification.py   g216_seqtab_nochim.csv g216_seqtab_ASV_seqs.fasta  epidome_DB/g216_ref_aln.fasta  g216_seqtab_ASV_blast.txt g216_seqtab.csv.classified.csv 99.5
 
 
-#old: python3 epidome/scripts/ASV_blast_classification.py   yycH_seqtab.csv yycH_seqtab.csv.ASV_seqs.fasta  epidome/DB/yycH_ref_aln.fasta yycH_seqtab.csv.ASV_blast.txt yycH_seqtab.csv.classified.csv 99.5
-#old: python3 epidome/scripts/ASV_blast_classification_combined.py -p1 190920_run1_yycH_seqtab_from_dada2.csv -p2 190920_run1_G216_seqtab_from_dada2.csv -p1_ref epidome/DB/yycH_ref_aln.fasta -p2_ref epidome/DB/g216_ref_aln.fasta
+#old: python3 epidome_scripts/ASV_blast_classification.py   yycH_seqtab.csv yycH_seqtab.csv.ASV_seqs.fasta  epidome_DB/yycH_ref_aln.fasta yycH_seqtab.csv.ASV_blast.txt yycH_seqtab.csv.classified.csv 99.5
+#old: python3 epidome_scripts/ASV_blast_classification_combined.py -p1 190920_run1_yycH_seqtab_from_dada2.csv -p2 190920_run1_G216_seqtab_from_dada2.csv -p1_ref epidome_DB/yycH_ref_aln.fasta -p2_ref epidome_DB/g216_ref_aln.fasta
 
 
 
@@ -289,9 +289,9 @@ binations of sequences, ASVs were categorized as “Unclassified”. Similarly, 
 
 
 #under r4-base
-source("epidome/scripts/epidome_functions.R")
+source("epidome_scripts/epidome_functions.R")
 
-ST_amplicon_table = read.table("epidome/DB/epidome_ST_amplicon_frequencies.txt",sep = "\t")
+ST_amplicon_table = read.table("epidome_DB/epidome_ST_amplicon_frequencies.txt",sep = "\t")
 epi01_table = read.table("g216_seqtab.csv.classified_noNA_seq31_or_30.csv",sep = ";",header=TRUE,row.names=1)
 epi02_table = read.table("yycH_seqtab.csv.classified_noNA_seq37_or_36.csv",sep = ";",header=TRUE,row.names=1)
 #> sum(epi01_table$A2.1)
@@ -359,7 +359,7 @@ library(RColorBrewer)
 #TODO: find out what are the combination 21006 in Aachen?
 
 
-source("epidome/scripts/epidome_functions.R")
+source("epidome_scripts/epidome_functions.R")
 #count_table = count_table[-29,]
 #row.names(count_table) <- c("-", "ST297", "ST170", "ST73", "ST225", "ST673", "ST215", "ST19", "Unclassified")
 #row.names(count_table) <- c("NA", "-", "X297", "X170", "X73", "X225", "X673", "X215", "X19", "Unclassified")
@@ -484,216 +484,10 @@ mkdir pandaseq.out
 #-p CCTACGGGNGGCWGCAG -q GACTACHVGGGTATCTAATCC
 for file in cutadapted_16S/filtered_R1/*_R1.fastq.gz; do echo "pandaseq -f ${file} -r ${file/_R1/_R2} -l 300   -w pandaseq.out/$(echo $file | cut -d'/' -f3 | cut -d'_' -f1)_merged.fasta >> LOG_pandaseq"; done
 ```
-pandaseq -f cutadapted_16S/filtered_R1/A10-1_R1.fastq.gz -r cutadapted_16S/filtered_R2/A10-1_R2.fastq.gz -l 300   -w pandaseq.out/A10-1_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A10-2_R1.fastq.gz -r cutadapted_16S/filtered_R2/A10-2_R2.fastq.gz -l 300   -w pandaseq.out/A10-2_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A10-3_R1.fastq.gz -r cutadapted_16S/filtered_R2/A10-3_R2.fastq.gz -l 300   -w pandaseq.out/A10-3_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A10-4_R1.fastq.gz -r cutadapted_16S/filtered_R2/A10-4_R2.fastq.gz -l 300   -w pandaseq.out/A10-4_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A17-1_R1.fastq.gz -r cutadapted_16S/filtered_R2/A17-1_R2.fastq.gz -l 300   -w pandaseq.out/A17-1_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A17-2_R1.fastq.gz -r cutadapted_16S/filtered_R2/A17-2_R2.fastq.gz -l 300   -w pandaseq.out/A17-2_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A17-3_R1.fastq.gz -r cutadapted_16S/filtered_R2/A17-3_R2.fastq.gz -l 300   -w pandaseq.out/A17-3_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A21-1_R1.fastq.gz -r cutadapted_16S/filtered_R2/A21-1_R2.fastq.gz -l 300   -w pandaseq.out/A21-1_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A21-2_R1.fastq.gz -r cutadapted_16S/filtered_R2/A21-2_R2.fastq.gz -l 300   -w pandaseq.out/A21-2_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A21-3_R1.fastq.gz -r cutadapted_16S/filtered_R2/A21-3_R2.fastq.gz -l 300   -w pandaseq.out/A21-3_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A2-1_R1.fastq.gz -r cutadapted_16S/filtered_R2/A2-1_R2.fastq.gz -l 300   -w pandaseq.out/A2-1_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A22-1_R1.fastq.gz -r cutadapted_16S/filtered_R2/A22-1_R2.fastq.gz -l 300   -w pandaseq.out/A22-1_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A22-2_R1.fastq.gz -r cutadapted_16S/filtered_R2/A22-2_R2.fastq.gz -l 300   -w pandaseq.out/A22-2_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A22-3_R1.fastq.gz -r cutadapted_16S/filtered_R2/A22-3_R2.fastq.gz -l 300   -w pandaseq.out/A22-3_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A2-2_R1.fastq.gz -r cutadapted_16S/filtered_R2/A2-2_R2.fastq.gz -l 300   -w pandaseq.out/A2-2_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A2-3_R1.fastq.gz -r cutadapted_16S/filtered_R2/A2-3_R2.fastq.gz -l 300   -w pandaseq.out/A2-3_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A24-1_R1.fastq.gz -r cutadapted_16S/filtered_R2/A24-1_R2.fastq.gz -l 300   -w pandaseq.out/A24-1_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A24-2_R1.fastq.gz -r cutadapted_16S/filtered_R2/A24-2_R2.fastq.gz -l 300   -w pandaseq.out/A24-2_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A24-3_R1.fastq.gz -r cutadapted_16S/filtered_R2/A24-3_R2.fastq.gz -l 300   -w pandaseq.out/A24-3_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A25-1_R1.fastq.gz -r cutadapted_16S/filtered_R2/A25-1_R2.fastq.gz -l 300   -w pandaseq.out/A25-1_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A25-2_R1.fastq.gz -r cutadapted_16S/filtered_R2/A25-2_R2.fastq.gz -l 300   -w pandaseq.out/A25-2_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A25-3_R1.fastq.gz -r cutadapted_16S/filtered_R2/A25-3_R2.fastq.gz -l 300   -w pandaseq.out/A25-3_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A27-1_R1.fastq.gz -r cutadapted_16S/filtered_R2/A27-1_R2.fastq.gz -l 300   -w pandaseq.out/A27-1_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A27-2_R1.fastq.gz -r cutadapted_16S/filtered_R2/A27-2_R2.fastq.gz -l 300   -w pandaseq.out/A27-2_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A27-3_R1.fastq.gz -r cutadapted_16S/filtered_R2/A27-3_R2.fastq.gz -l 300   -w pandaseq.out/A27-3_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A28-1_R1.fastq.gz -r cutadapted_16S/filtered_R2/A28-1_R2.fastq.gz -l 300   -w pandaseq.out/A28-1_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A28-2_R1.fastq.gz -r cutadapted_16S/filtered_R2/A28-2_R2.fastq.gz -l 300   -w pandaseq.out/A28-2_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A28-3_R1.fastq.gz -r cutadapted_16S/filtered_R2/A28-3_R2.fastq.gz -l 300   -w pandaseq.out/A28-3_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A3-1_R1.fastq.gz -r cutadapted_16S/filtered_R2/A3-1_R2.fastq.gz -l 300   -w pandaseq.out/A3-1_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A3-2_R1.fastq.gz -r cutadapted_16S/filtered_R2/A3-2_R2.fastq.gz -l 300   -w pandaseq.out/A3-2_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A3-3_R1.fastq.gz -r cutadapted_16S/filtered_R2/A3-3_R2.fastq.gz -l 300   -w pandaseq.out/A3-3_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A4-1_R1.fastq.gz -r cutadapted_16S/filtered_R2/A4-1_R2.fastq.gz -l 300   -w pandaseq.out/A4-1_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A4-2_R1.fastq.gz -r cutadapted_16S/filtered_R2/A4-2_R2.fastq.gz -l 300   -w pandaseq.out/A4-2_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A4-3_R1.fastq.gz -r cutadapted_16S/filtered_R2/A4-3_R2.fastq.gz -l 300   -w pandaseq.out/A4-3_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A4-4_R1.fastq.gz -r cutadapted_16S/filtered_R2/A4-4_R2.fastq.gz -l 300   -w pandaseq.out/A4-4_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A5-1_R1.fastq.gz -r cutadapted_16S/filtered_R2/A5-1_R2.fastq.gz -l 300   -w pandaseq.out/A5-1_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A5-2_R1.fastq.gz -r cutadapted_16S/filtered_R2/A5-2_R2.fastq.gz -l 300   -w pandaseq.out/A5-2_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A5-3_R1.fastq.gz -r cutadapted_16S/filtered_R2/A5-3_R2.fastq.gz -l 300   -w pandaseq.out/A5-3_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A5-4_R1.fastq.gz -r cutadapted_16S/filtered_R2/A5-4_R2.fastq.gz -l 300   -w pandaseq.out/A5-4_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A5-5_R1.fastq.gz -r cutadapted_16S/filtered_R2/A5-5_R2.fastq.gz -l 300   -w pandaseq.out/A5-5_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A5-6_R1.fastq.gz -r cutadapted_16S/filtered_R2/A5-6_R2.fastq.gz -l 300   -w pandaseq.out/A5-6_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/A5-7_R1.fastq.gz -r cutadapted_16S/filtered_R2/A5-7_R2.fastq.gz -l 300   -w pandaseq.out/A5-7_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/Aachen10_R1.fastq.gz -r cutadapted_16S/filtered_R2/Aachen10_R2.fastq.gz -l 300   -w pandaseq.out/Aachen10_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/Aachen11_R1.fastq.gz -r cutadapted_16S/filtered_R2/Aachen11_R2.fastq.gz -l 300   -w pandaseq.out/Aachen11_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/Aachen12_R1.fastq.gz -r cutadapted_16S/filtered_R2/Aachen12_R2.fastq.gz -l 300   -w pandaseq.out/Aachen12_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/Aachen13_R1.fastq.gz -r cutadapted_16S/filtered_R2/Aachen13_R2.fastq.gz -l 300   -w pandaseq.out/Aachen13_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/Aachen14_R1.fastq.gz -r cutadapted_16S/filtered_R2/Aachen14_R2.fastq.gz -l 300   -w pandaseq.out/Aachen14_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/Aachen15_R1.fastq.gz -r cutadapted_16S/filtered_R2/Aachen15_R2.fastq.gz -l 300   -w pandaseq.out/Aachen15_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/Aachen16_R1.fastq.gz -r cutadapted_16S/filtered_R2/Aachen16_R2.fastq.gz -l 300   -w pandaseq.out/Aachen16_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/Aachen17_R1.fastq.gz -r cutadapted_16S/filtered_R2/Aachen17_R2.fastq.gz -l 300   -w pandaseq.out/Aachen17_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/Aachen18_R1.fastq.gz -r cutadapted_16S/filtered_R2/Aachen18_R2.fastq.gz -l 300   -w pandaseq.out/Aachen18_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/Aachen19_R1.fastq.gz -r cutadapted_16S/filtered_R2/Aachen19_R2.fastq.gz -l 300   -w pandaseq.out/Aachen19_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/Aachen1_R1.fastq.gz -r cutadapted_16S/filtered_R2/Aachen1_R2.fastq.gz -l 300   -w pandaseq.out/Aachen1_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/Aachen20_R1.fastq.gz -r cutadapted_16S/filtered_R2/Aachen20_R2.fastq.gz -l 300   -w pandaseq.out/Aachen20_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/Aachen21_R1.fastq.gz -r cutadapted_16S/filtered_R2/Aachen21_R2.fastq.gz -l 300   -w pandaseq.out/Aachen21_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/Aachen22_R1.fastq.gz -r cutadapted_16S/filtered_R2/Aachen22_R2.fastq.gz -l 300   -w pandaseq.out/Aachen22_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/Aachen2_R1.fastq.gz -r cutadapted_16S/filtered_R2/Aachen2_R2.fastq.gz -l 300   -w pandaseq.out/Aachen2_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/Aachen3_R1.fastq.gz -r cutadapted_16S/filtered_R2/Aachen3_R2.fastq.gz -l 300   -w pandaseq.out/Aachen3_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/Aachen4_R1.fastq.gz -r cutadapted_16S/filtered_R2/Aachen4_R2.fastq.gz -l 300   -w pandaseq.out/Aachen4_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/Aachen5_R1.fastq.gz -r cutadapted_16S/filtered_R2/Aachen5_R2.fastq.gz -l 300   -w pandaseq.out/Aachen5_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/Aachen6_R1.fastq.gz -r cutadapted_16S/filtered_R2/Aachen6_R2.fastq.gz -l 300   -w pandaseq.out/Aachen6_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/Aachen7_R1.fastq.gz -r cutadapted_16S/filtered_R2/Aachen7_R2.fastq.gz -l 300   -w pandaseq.out/Aachen7_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/Aachen8_R1.fastq.gz -r cutadapted_16S/filtered_R2/Aachen8_R2.fastq.gz -l 300   -w pandaseq.out/Aachen8_merged.fasta >> LOG_pandaseq
-pandaseq -f cutadapted_16S/filtered_R1/Aachen9_R1.fastq.gz -r cutadapted_16S/filtered_R2/Aachen9_R2.fastq.gz -l 300   -w pandaseq.out/Aachen9_merged.fasta >> LOG_pandaseq
+#pandaseq -f cutadapted_16S/filtered_R1/A10-1_R1.fastq.gz -r cutadapted_16S/filtered_R2/A10-1_R2.fastq.gz -l 300   -w pandaseq.out/A10-1_merged.fasta >> LOG_pandaseq
 
-
-
-
-
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ 
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A2-1_merged.fasta | wc -l
-146133
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A2-2_merged.fasta | wc -l
-76677
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A2-3_merged.fasta | wc -l
-100361
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A3-1_merged.fasta | wc -l
-98647
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A3-2_merged.fasta | wc -l
-84688
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A3-3_merged.fasta | wc -l
-85617
-
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A4-1_merged.fasta | wc -l
-123164
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A4-2_merged.fasta | wc -l
-104207
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A4-3_merged.fasta | wc -l
-79820
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A4-4_merged.fasta | wc -l
-78063
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A5-1_merged.fasta | wc -l
-85946
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A5-2_merged.fasta | wc -l
-85818
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A5-3_merged.fasta | wc -l
-90388
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A5-4_merged.fasta | wc -l
-51956
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A5-5_merged.fasta | wc -l
-76876
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A5-6_merged.fasta | wc -l
-86954
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A5-7_merged.fasta | wc -l
-108883
-
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A10-1_merged.fasta | wc -l
-22200
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A10-2_merged.fasta | wc -l
-168913
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A10-3_merged.fasta | wc -l
-201347
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A10-4_merged.fasta | wc -l
-149791
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A17-1_merged.fasta | wc -l
-128848
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A17-2_merged.fasta | wc -l
-134996
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A17-3_merged.fasta | wc -l
-133283
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A21-1_merged.fasta | wc -l
-177017
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A21-2_merged.fasta | wc -l
-181637
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A21-3_merged.fasta | wc -l
-91908
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A22-1_merged.fasta | wc -l
-58841
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A22-2_merged.fasta | wc -l
-86185
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A22-3_merged.fasta | wc -l
-91537
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A24-1_merged.fasta | wc -l
-84083
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A24-2_merged.fasta | wc -l
-57519
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A24-3_merged.fasta | wc -l
-113871
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A25-1_merged.fasta | wc -l
-76554
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A25-2_merged.fasta | wc -l
-90828
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A25-3_merged.fasta | wc -l
-90038
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A27-1_merged.fasta | wc -l
-95018
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A27-2_merged.fasta | wc -l
-92669
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A27-3_merged.fasta | wc -l
-122540
-
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A28-1_merged.fasta | wc -l
-99970
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A28-2_merged.fasta | wc -l
-65993
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A28-3_merged.fasta | wc -l
-84688
-
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" Aachen1_merged.fasta | wc -l
-90648
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" Aachen2_merged.fasta | wc -l
-144198
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" Aachen3_merged.fasta | wc -l
-68683
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" Aachen4_merged.fasta | wc -l
-118256
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" Aachen5_merged.fasta | wc -l
-7622
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" Aachen6_merged.fasta | wc -l
-82144
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" Aachen7_merged.fasta | wc -l
-154467
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" Aachen8_merged.fasta | wc -l
-20878
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" Aachen9_merged.fasta | wc -l
-81701
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" Aachen10_merged.fasta | wc -l
-91096
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" Aachen11_merged.fasta | wc -l
-59920
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" Aachen12_merged.fasta | wc -l
-106587
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" Aachen13_merged.fasta | wc -l
-104357
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" Aachen14_merged.fasta | wc -l
-98404
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" Aachen15_merged.fasta | wc -l
-67505
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" Aachen16_merged.fasta | wc -l
-72608
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" Aachen17_merged.fasta | wc -l
-95296
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" Aachen18_merged.fasta | wc -l
-93077
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" Aachen19_merged.fasta | wc -l
-116718
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" Aachen20_merged.fasta | wc -l
-135757
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" Aachen21_merged.fasta | wc -l
-69694
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" Aachen22_merged.fasta | wc -l
-143402
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ 
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ 
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ 
-
-
-
-
-
+#(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/pandaseq.out$ grep ">" A2-1_merged.fasta | wc -l
+#146133
 
 
 ## 5, create two QIIME mapping files
@@ -718,211 +512,9 @@ cat usearch_checked_combined.000/chimeras.txt usearch_checked_combined.001/chime
 filter_fasta.py -f combined_fasta/combined_seqs.fna -o combined_fasta/combined_nonchimera_seqs.fna -s chimeras.txt -n;
 rm -rf usearch_checked_combined.0*
 
-
-
-grep ">A2.1_" combined_nonchimera_seqs.fna | wc -l
-grep ">A2.2_" combined_nonchimera_seqs.fna | wc -l
-grep ">A2.3_" combined_nonchimera_seqs.fna | wc -l
-grep ">A3.1_" combined_nonchimera_seqs.fna | wc -l
-grep ">A3.2_" combined_nonchimera_seqs.fna | wc -l
-grep ">A3.3_" combined_nonchimera_seqs.fna | wc -l
-grep ">A4.1_" combined_nonchimera_seqs.fna | wc -l
-grep ">A4.2_" combined_nonchimera_seqs.fna | wc -l
-grep ">A4.3_" combined_nonchimera_seqs.fna | wc -l
-grep ">A4.4_" combined_nonchimera_seqs.fna | wc -l
-grep ">A5.1_" combined_nonchimera_seqs.fna | wc -l
-grep ">A5.2_" combined_nonchimera_seqs.fna | wc -l
-grep ">A5.3_" combined_nonchimera_seqs.fna | wc -l
-grep ">A5.4_" combined_nonchimera_seqs.fna | wc -l
-grep ">A5.5_" combined_nonchimera_seqs.fna | wc -l
-grep ">A5.6_" combined_nonchimera_seqs.fna | wc -l
-grep ">A5.7_" combined_nonchimera_seqs.fna | wc -l
-grep ">A10.1_" combined_nonchimera_seqs.fna | wc -l
-grep ">A10.2_" combined_nonchimera_seqs.fna | wc -l
-grep ">A10.3_" combined_nonchimera_seqs.fna | wc -l
-grep ">A10.4_" combined_nonchimera_seqs.fna | wc -l
-grep ">A17.1_" combined_nonchimera_seqs.fna | wc -l
-grep ">A17.2_" combined_nonchimera_seqs.fna | wc -l
-grep ">A17.3_" combined_nonchimera_seqs.fna | wc -l
-grep ">A21.1_" combined_nonchimera_seqs.fna | wc -l
-grep ">A21.2_" combined_nonchimera_seqs.fna | wc -l
-grep ">A21.3_" combined_nonchimera_seqs.fna | wc -l
-grep ">A22.1_" combined_nonchimera_seqs.fna | wc -l
-grep ">A22.2_" combined_nonchimera_seqs.fna | wc -l
-grep ">A22.3_" combined_nonchimera_seqs.fna | wc -l
-grep ">A24.1_" combined_nonchimera_seqs.fna | wc -l
-grep ">A24.2_" combined_nonchimera_seqs.fna | wc -l
-grep ">A24.3_" combined_nonchimera_seqs.fna | wc -l
-grep ">A25.1_" combined_nonchimera_seqs.fna | wc -l
-grep ">A25.2_" combined_nonchimera_seqs.fna | wc -l
-grep ">A25.3_" combined_nonchimera_seqs.fna | wc -l
-grep ">A27.1_" combined_nonchimera_seqs.fna | wc -l
-grep ">A27.2_" combined_nonchimera_seqs.fna | wc -l
-grep ">A27.3_" combined_nonchimera_seqs.fna | wc -l
-grep ">A28.1_" combined_nonchimera_seqs.fna | wc -l
-grep ">A28.2_" combined_nonchimera_seqs.fna | wc -l
-grep ">A28.3_" combined_nonchimera_seqs.fna | wc -l
-grep ">Aachen1_" combined_nonchimera_seqs.fna | wc -l
-grep ">Aachen2_" combined_nonchimera_seqs.fna | wc -l
-grep ">Aachen3_" combined_nonchimera_seqs.fna | wc -l
-grep ">Aachen4_" combined_nonchimera_seqs.fna | wc -l
-grep ">Aachen5_" combined_nonchimera_seqs.fna | wc -l
-grep ">Aachen6_" combined_nonchimera_seqs.fna | wc -l
-grep ">Aachen7_" combined_nonchimera_seqs.fna | wc -l
-grep ">Aachen8_" combined_nonchimera_seqs.fna | wc -l
-grep ">Aachen9_" combined_nonchimera_seqs.fna | wc -l
-grep ">Aachen10_" combined_nonchimera_seqs.fna | wc -l
-grep ">Aachen11_" combined_nonchimera_seqs.fna | wc -l
-grep ">Aachen12_" combined_nonchimera_seqs.fna | wc -l
-grep ">Aachen13_" combined_nonchimera_seqs.fna | wc -l
-grep ">Aachen14_" combined_nonchimera_seqs.fna | wc -l
-grep ">Aachen15_" combined_nonchimera_seqs.fna | wc -l
-grep ">Aachen16_" combined_nonchimera_seqs.fna | wc -l
-grep ">Aachen17_" combined_nonchimera_seqs.fna | wc -l
-grep ">Aachen18_" combined_nonchimera_seqs.fna | wc -l
-grep ">Aachen19_" combined_nonchimera_seqs.fna | wc -l
-grep ">Aachen20_" combined_nonchimera_seqs.fna | wc -l
-grep ">Aachen21_" combined_nonchimera_seqs.fna | wc -l
-grep ">Aachen22_" combined_nonchimera_seqs.fna | wc -l
-
-
-
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A2.1_" combined_nonchimera_seqs.fna | wc -l
-121857
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A2.2_" combined_nonchimera_seqs.fna | wc -l
-73473
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A2.3_" combined_nonchimera_seqs.fna | wc -l
-85895
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A3.1_" combined_nonchimera_seqs.fna | wc -l
-67154
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A3.2_" combined_nonchimera_seqs.fna | wc -l
-59502
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A3.3_" combined_nonchimera_seqs.fna | wc -l
-62240
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A4.1_" combined_nonchimera_seqs.fna | wc -l
-98546
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A4.2_" combined_nonchimera_seqs.fna | wc -l
-89672
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A4.3_" combined_nonchimera_seqs.fna | wc -l
-71996
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A4.4_" combined_nonchimera_seqs.fna | wc -l
-70572
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A5.1_" combined_nonchimera_seqs.fna | wc -l
-64555
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A5.2_" combined_nonchimera_seqs.fna | wc -l
-85322
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A5.3_" combined_nonchimera_seqs.fna | wc -l
-83535
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A5.4_" combined_nonchimera_seqs.fna | wc -l
-48179
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A5.5_" combined_nonchimera_seqs.fna | wc -l
-68213
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A5.6_" combined_nonchimera_seqs.fna | wc -l
-73357
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A5.7_" combined_nonchimera_seqs.fna | wc -l
-92808
-
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A10.1_" combined_nonchimera_seqs.fna | wc -l
-18340
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A10.2_" combined_nonchimera_seqs.fna | wc -l
-136201
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A10.3_" combined_nonchimera_seqs.fna | wc -l
-171439
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A10.4_" combined_nonchimera_seqs.fna | wc -l
-127918
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A17.1_" combined_nonchimera_seqs.fna | wc -l
-113374
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A17.2_" combined_nonchimera_seqs.fna | wc -l
-117661
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A17.3_" combined_nonchimera_seqs.fna | wc -l
-128120
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A21.1_" combined_nonchimera_seqs.fna | wc -l
-154933
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A21.2_" combined_nonchimera_seqs.fna | wc -l
-157099
-
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A21.3_" combined_nonchimera_seqs.fna | wc -l
-83002
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A22.1_" combined_nonchimera_seqs.fna | wc -l
-44343
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A22.2_" combined_nonchimera_seqs.fna | wc -l
-63899
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A22.3_" combined_nonchimera_seqs.fna | wc -l
-69584
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A24.1_" combined_nonchimera_seqs.fna | wc -l
-72033
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A24.2_" combined_nonchimera_seqs.fna | wc -l
-50947
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A24.3_" combined_nonchimera_seqs.fna | wc -l
-84096
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A25.1_" combined_nonchimera_seqs.fna | wc -l
-76044
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A25.2_" combined_nonchimera_seqs.fna | wc -l
-90329
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A25.3_" combined_nonchimera_seqs.fna | wc -l
-64600
-
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A27.1_" combined_nonchimera_seqs.fna | wc -l
-72532
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A27.2_" combined_nonchimera_seqs.fna | wc -l
-90225
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A27.3_" combined_nonchimera_seqs.fna | wc -l
-121640
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A28.1_" combined_nonchimera_seqs.fna | wc -l
-98793
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A28.2_" combined_nonchimera_seqs.fna | wc -l
-64979
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A28.3_" combined_nonchimera_seqs.fna | wc -l
-59840
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">Aachen1_" combined_nonchimera_seqs.fna | wc -l
-90612
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">Aachen2_" combined_nonchimera_seqs.fna | wc -l
-144147
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">Aachen3_" combined_nonchimera_seqs.fna | wc -l
-61849
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">Aachen4_" combined_nonchimera_seqs.fna | wc -l
-102376
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">Aachen5_" combined_nonchimera_seqs.fna | wc -l
-7602
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">Aachen6_" combined_nonchimera_seqs.fna | wc -l
-80147
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">Aachen7_" combined_nonchimera_seqs.fna | wc -l
-154322
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">Aachen8_" combined_nonchimera_seqs.fna | wc -l
-18092
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">Aachen9_" combined_nonchimera_seqs.fna | wc -l
-74288
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">Aachen10_" combined_nonchimera_seqs.fna | wc -l
-89087
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">Aachen11_" combined_nonchimera_seqs.fna | wc -l
-59886
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">Aachen12_" combined_nonchimera_seqs.fna | wc -l
-91953
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">Aachen13_" combined_nonchimera_seqs.fna | wc -l
-102302
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">Aachen14_" combined_nonchimera_seqs.fna | wc -l
-98393
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">Aachen15_" combined_nonchimera_seqs.fna | wc -l
-67168
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">Aachen16_" combined_nonchimera_seqs.fna | wc -l
-72598
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">Aachen17_" combined_nonchimera_seqs.fna | wc -l
-94166
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">Aachen18_" combined_nonchimera_seqs.fna | wc -l
-85855
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">Aachen19_" combined_nonchimera_seqs.fna | wc -l
-115171
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">Aachen20_" combined_nonchimera_seqs.fna | wc -l
-125207
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">Aachen21_" combined_nonchimera_seqs.fna | wc -l
-67897
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">Aachen22_" combined_nonchimera_seqs.fna | wc -l
-142769
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ 
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ 
-(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ 
-
-
+#grep ">A2.1_" combined_nonchimera_seqs.fna | wc -l
+#(qiime1) jhuang@hamburg:~/DATA/Data_Holger_Epidome_myData2/combined_fasta$ grep ">A2.1_" combined_nonchimera_seqs.fna | wc -l
+#121857
 
 
 ## 8, create OTU picking parameter file, and run the QIIME open reference picking pipeline
