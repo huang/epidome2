@@ -1,0 +1,60 @@
+---
+title: "Epidome yycH rarefaction"
+output: html_notebook
+author: "Anna Ingham, SSI Copenhagen"
+date: "March 2020"
+editor_options: 
+  chunk_output_type: inline
+---
+
+```{r}
+library(phyloseq)
+require(ggplot2)
+require(scales)
+require(reshape2)
+library(vegan)
+library(dplyr)
+library(ranacapa)
+library(tibble)
+theme_set(theme_bw())
+```
+
+```{r}
+source("https://raw.githubusercontent.com/ssi-dk/epidome/master/scripts/epidome_functions.R")
+```
+
+### Load sequence tables and metadata
+```{r}
+epi02_table = read.table("https://raw.githubusercontent.com/ssi-dk/epidome/master/example_data/190920_run1_and_2_yycH_seqtab_nochim.csv",sep = ";",header=TRUE,row.names=1)
+
+metadata_table <- read.table("https://raw.githubusercontent.com/ssi-dk/epidome/master/example_data/article_metadata.txt",header=TRUE,row.names=1)
+
+rownames(metadata_table) <- gsub('\\.', '-', rownames(metadata_table))
+metadata_table$sample.site <- gsub('Even mock', 'mock', metadata_table$sample.site)
+metadata_table$sample.site <- gsub('Staggered mock', 'mock', metadata_table$sample.site)
+metadata_table$sample.site <- gsub('Negative', 'negative', metadata_table$sample.site)
+
+ps <- phyloseq(otu_table(epi02_table[,2:ncol(epi02_table)], taxa_are_rows=FALSE), sample_data(metadata_table))
+ps
+
+ps <- prune_taxa(taxa_sums(ps) != 0, ps)
+ps
+```
+
+#### Generate rarefaction curves
+```{r fig.height=12, fig.width=16}
+set.seed(123)
+p1 <- ggrare(ps, step = 500, se = FALSE, label = "Sample") 
+
+p1 + facet_wrap(.~sample.site, ncol = 2)  + theme(plot.title = element_text(size=14, face="bold"), panel.background = element_blank(), axis.title.x = element_text(size =14, face = "bold"), axis.title.y = element_text(size =14, face = "bold"), axis.text.x = element_text(size = 10, angle = 45, hjust =1), axis.text.y = element_text(size = 12), legend.title = element_text(size = 16, face = "bold"), legend.text = element_text(size = 16), strip.text.x = element_text(angle = 0, face = "bold", size = 12), strip.background =element_rect(fill="white")) + xlab("Post-QC library size per sample") + ylab("# of observed ASVs") + ggtitle("yycH gene - rarefaction curves") + geom_vline(xintercept=5000, color = "red", size = 0.8) + geom_vline(xintercept=10000, color = "orange", size = 0.8) + geom_vline(xintercept=2500, color = "darkred", size = 0.8) + geom_text(aes(x=1900, label="2500", y=28), colour="darkred", angle=90) + geom_text(aes(x=4300, label="5000", y=28), colour="red", angle=90) + geom_text(aes(x=9300, label="10000", y=28), colour="orange", angle=90) + scale_x_continuous(breaks = c(2500, 5000, 10000, 20000, 40000, 60000, 80000)) + scale_y_continuous(breaks = c(0,10,20,30), limits=c(0,30))
+```
+
+
+
+
+
+
+
+
+
+

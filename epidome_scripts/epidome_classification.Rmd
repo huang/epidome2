@@ -1,0 +1,138 @@
+---
+title: "Epidome sequence analysis"
+output:
+  html_notebook:
+    toc: yes
+author: "Thor Bech Johannesen, Statens Serum Institut"
+---
+
+
+## **Classification of dada2 generated ASVs, creation of barplots, PCA plots and more**
+
+### Load functions
+
+```{r}
+source("https://raw.githubusercontent.com/ssi-dk/epidome/master/scripts/epidome_functions.R")
+```
+#### <br></br>
+#### Read in data. Required data is:
+###### Table containing frequencies of STs and amplicons (found in github repo)
+###### Sequence count tables in dada2 format created by running ASV_blast_classification.py on dada2 ASV table output
+###### OPTIONAL: metadata table. Row names must match column names in dada output.
+```{r}
+ST_amplicon_table = read.table("https://raw.githubusercontent.com/ssi-dk/epidome/master/DB/epidome_ST_amplicon_frequencies.txt",sep = "\t")
+epi01_table = read.table("https://raw.githubusercontent.com/ssi-dk/epidome/master/example_data/190920_run1_G216_seqtab_from_dada2.csv.classified.csv",sep = ";",header=TRUE,row.names=1)
+epi02_table = read.table("https://raw.githubusercontent.com/ssi-dk/epidome/master/example_data/190920_run1_yycH_seqtab_from_dada2.csv.classified.csv",sep = ";",header=TRUE,row.names=1)
+metadata_table = read.table("https://raw.githubusercontent.com/ssi-dk/epidome/master/example_data/article_metadata.txt",header=TRUE,row.names=1)
+```
+#### <br></br>
+#### If ASV data is spread over multiple dada runs they can be combined like this
+```{r}
+epi01_mock_table = read.table("https://raw.githubusercontent.com/ssi-dk/epidome/master/example_data/190920_run2_G216_seqtab_from_dada2.csv.classified.csv",sep = ";",header=TRUE,row.names=1)
+epi02_mock_table = read.table("https://raw.githubusercontent.com/ssi-dk/epidome/master/example_data/190920_run2_yycH_seqtab_from_dada2.csv.classified.csv",sep = ";",header=TRUE,row.names=1)
+epi01_clinical_table = read.table("https://raw.githubusercontent.com/ssi-dk/epidome/master/example_data/190920_run1_G216_seqtab_from_dada2.csv.classified.csv",sep = ";",header=TRUE,row.names=1)
+epi02_clinical_table = read.table("https://raw.githubusercontent.com/ssi-dk/epidome/master/example_data/190920_run1_yycH_seqtab_from_dada2.csv.classified.csv",sep = ";",header=TRUE,row.names=1)
+epi01_table = combine_ASV_tables(epi01_mock_table,epi01_clinical_table)
+epi02_table = combine_ASV_tables(epi02_mock_table,epi02_clinical_table)
+```
+
+
+#### <br></br>
+#### Setup object for data handling
+##### without metadata
+```{r}
+epidome_object = setup_epidome_object(epi01_table,epi02_table)
+```
+#### <br></br>
+##### with metadata
+```{r}
+epidome_object = setup_epidome_object(epi01_table,epi02_table,metadata_table = metadata_table)
+epidome_object$p1_table
+epidome_object$p2_table
+epidome_object$metadata
+```
+#### <br></br>
+#### Check how well the output from the two primer sets align. Color_variable can be left out
+```{r}
+primer_compare = compare_primer_output(epidome_object,color_variable = "sample.type")
+primer_compare$plot
+```
+
+##### Combine ASVs assigned to the same taxa
+```{r}
+eo_ASV_combined = combine_ASVs_epidome(epidome_object)
+```
+#### <br></br>
+
+
+##### Remove low count samples from data set. (Only include samples where number of sequences from primer1 >= x and sequences form primer2 >= y)
+```{r}
+eo_filtered = filter_lowcount_samples_epidome(eo_ASV_combined,500,500)
+```
+#### <br></br>
+
+#####  --------------------------------------------------------
+##### Assign ASVs to STs on a per sample basis and make barplot
+```{r}
+count_table = classify_epidome(eo_filtered,ST_amplicon_table)
+p = make_barplot_epidome(count_table,reorder=FALSE,normalize=TRUE)
+p
+```
+
+
+#### <br></br>
+
+#### Data stratification based on metadata variables (requires metadata)
+```{r}
+eo_clinical = prune_by_variable_epidome(epidome_object,"sample.type",c("Clinical"))
+eo_mock = prune_by_variable_epidome(epidome_object,"sample.type",c("Mock community"))
+```
+#### <br></br>
+
+#####  ------------------------------------------------------------------------------------------------
+#### make PCA plots and color by given variable (requires metadata)
+##### Normalize data to percent
+```{r}
+epidome_object_clinical_norm = normalize_epidome_object(eo_clinical) ### Normalize counts to percent
+```
+
+##### Color by patient
+```{r}
+PCA_patient_colored = plot_PCA_epidome(epidome_object_clinical_norm,color_variable = "patient.ID",colors = c(),plot_ellipse = FALSE)
+PCA_patient_colored + ggtitle("PCA plot of nose and skin samples colored by subject")
+
+```
+
+#### <br></br>
+
+##### Color by sampling site
+```{r}
+PCA_sample_site_colored = plot_PCA_epidome(epidome_object_clinical_norm,color_variable = "sample.site",colors = c("Red","Blue"),plot_ellipse = TRUE)
+PCA_sample_site_colored + ggtitle("PCA plot of nose and skin samples colored by sampling site")
+
+```
+#### <br></br>
+
+#### General data manipulation
+##### Remove low count samples
+```{r}
+eo_filter_lowcount = filter_lowcount_samples_epidome(epidome_object,p1_threshold = 500,p2_threshold = 500)
+```
+##### Remove low count ASVs
+```{r}
+eo_filter_ASVs = epidome_filtered_ASVs = filter_lowcount_ASVs_epidome(epidome_object,percent_threshold = 1)
+```
+##### Normalize data to percent
+```{r}
+epidome_object_normalized = normalize_epidome_object(epidome_object)
+```
+
+##### Combine ASVs that have been classified as the same sequence
+```{r}
+epidome_object_ASV_combined = combine_ASVs_epidome(epidome_object)
+```
+##### Make epidome object only including isolates were the variable in "variable_name" is equal to one found in "variable_values"
+```{r}
+epidome_object_clinical = prune_by_variable_epidome(epidome_object,variable_name = "sample.type",variable_values = c("Clinical"))
+```
+
